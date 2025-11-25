@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { api, endpoints } from '@/lib/api';
+import { blogApi } from '@/lib/api';
 import { Loader2 } from 'lucide-react';
 
 const commentSchema = z.object({
@@ -47,8 +47,7 @@ export function CommentForm({ websiteId, postId, onCommentAdded }: CommentFormPr
     const onSubmit = async (data: CommentFormData) => {
         setLoading(true);
         try {
-            await api.post(endpoints.comments.create(websiteId, postId), data);
-
+            await blogApi.createComment(websiteId, postId, data);
             form.reset();
             onCommentAdded?.();
         } catch (error: any) {

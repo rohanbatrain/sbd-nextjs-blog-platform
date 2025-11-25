@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { api, endpoints } from '@/lib/api';
+import { blogApi } from '@/lib/api';
 import { Plus, Loader2 } from 'lucide-react';
 
 const websiteSchema = z.object({
@@ -60,7 +60,7 @@ export function CreateWebsiteDialog({ onWebsiteCreated }: CreateWebsiteDialogPro
     const onSubmit = async (data: WebsiteFormData) => {
         setLoading(true);
         try {
-            await api.post(endpoints.websites.create, data);
+            await blogApi.createWebsite(data);
 
             setOpen(false);
             form.reset();

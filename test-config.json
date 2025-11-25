@@ -1,0 +1,30 @@
+{
+    "name": "sbd-nextjs-blog-platform",
+    "scripts": {
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "test:e2e": "playwright test",
+        "test:e2e:ui": "playwright test --ui",
+        "test:e2e:debug": "playwright test --debug"
+    },
+    "jest": {
+        "preset": "ts-jest",
+        "testEnvironment": "jsdom",
+        "setupFilesAfterEnv": [
+            "<rootDir>/jest.setup.ts"
+        ],
+        "moduleNameMapper": {
+            "^@/(.*)$": "<rootDir>/src/$1"
+        },
+        "testMatch": [
+            "**/__tests__/**/*.test.ts",
+            "**/__tests__/**/*.test.tsx"
+        ],
+        "collectCoverageFrom": [
+            "src/**/*.{ts,tsx}",
+            "!src/**/*.d.ts",
+            "!src/**/*.stories.tsx"
+        ]
+    }
+}

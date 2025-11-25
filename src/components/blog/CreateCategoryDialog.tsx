@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { api, endpoints } from '@/lib/api';
+import { blogApi } from '@/lib/api';
 import { Plus, Loader2 } from 'lucide-react';
 
 const categorySchema = z.object({
@@ -59,7 +59,7 @@ export function CreateCategoryDialog({ websiteId, onCategoryCreated }: CreateCat
     const onSubmit = async (data: CategoryFormData) => {
         setLoading(true);
         try {
-            await api.post(endpoints.categories.create(websiteId), data);
+            await blogApi.createCategory(websiteId, data);
 
             setOpen(false);
             form.reset();

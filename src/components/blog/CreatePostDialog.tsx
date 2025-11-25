@@ -32,7 +32,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { RichTextEditor } from './RichTextEditor';
-import { api, endpoints } from '@/lib/api';
+import { blogApi } from '@/lib/api';
 import { Plus, Loader2 } from 'lucide-react';
 
 const postSchema = z.object({
@@ -75,7 +75,7 @@ export function CreatePostDialog({ websiteId, onPostCreated }: CreatePostDialogP
             const categories = data.categories ? data.categories.split(',').map(c => c.trim()) : [];
             const tags = data.tags ? data.tags.split(',').map(t => t.trim()) : [];
 
-            await api.post(endpoints.posts.create(websiteId), {
+            await blogApi.createPost(websiteId, {
                 ...data,
                 content,
                 categories,
