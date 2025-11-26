@@ -46,6 +46,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # REMOVED: The workaround step was installing Next.js 16 CLI, which broke 'next lint'.
+      
       - name: Lint
         run: pnpm run lint
 
@@ -58,6 +60,13 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # MOVED: Artifact must be uploaded here, immediately after build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-standalone
+          path: .next/standalone
+
   docker:
     needs: prepare
     runs-on: ubuntu-latest
@@ -68,12 +77,20 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
+      # ADDED: Required for multi-arch build
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # ADDED: Required for multi-arch build
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Login to GHCR
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: ${{ secrets.GHCR_USERNAME }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to DockerHub
         uses: docker/login-action@v2
@@ -82,13 +99,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # ADDED: Force lowercase tags to prevent registry errors
       - name: Set tags
         id: set_image
         run: |
-          IMAGE_NAME_GHCR=ghcr.io/${{ github.repository_owner }}/sbd-nextjs-${{ github.event.repository.name }}
-          IMAGE_NAME_DH=${{ secrets.DOCKERHUB_USERNAME }}/sbd-nextjs-${{ github.event.repository.name }}
-          echo "IMAGE_GHCR=${IMAGE_NAME_GHCR}:dev" >> $GITHUB_OUTPUT
-          echo "IMAGE_DH=${IMAGE_NAME_DH}:dev" >> $GITHUB_OUTPUT
+          # Convert to lowercase
+          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          REPO_NAME=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
+          
+          GHCR_IMAGE="ghcr.io/${REPO_OWNER}/sbd-nextjs-${REPO_NAME}"
+          DH_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/sbd-nextjs-${REPO_NAME}"
+          
+          echo "ghcr_tag=${GHCR_IMAGE}:dev" >> $GITHUB_OUTPUT
+          echo "dh_tag=${DH_IMAGE}:dev" >> $GITHUB_OUTPUT
 
       - name: Build and push (multi-arch)
         uses: docker/build-push-action@v4
@@ -97,13 +120,7 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/${{ github.repository_owner }}/sbd-nextjs-${{ github.event.repository.name }}:dev
-            ${{ secrets.DOCKERHUB_USERNAME }}/sbd-nextjs-${{ github.event.repository.name }}:dev
+            ${{ steps.set_image.outputs.ghcr_tag }}
+            ${{ steps.set_image.outputs.dh_tag }}
           build-args: |
             NODE_ENV=production
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: next-standalone
-          path: .next/standalone
