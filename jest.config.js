@@ -19,7 +19,7 @@ const customJestConfig = {
         '!src/**/*.stories.tsx',
         '!src/app/**', // Exclude Next.js app directory
     ],
-    coverageThresholds: {
+    coverageThreshold: {
         global: {
             branches: 70,
             functions: 70,
