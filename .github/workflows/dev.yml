@@ -45,6 +45,10 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Install Linting
+        run: pnpm add -D eslint eslint-config-next
+
+      
 
       # REMOVED: The workaround step was installing Next.js 16 CLI, which broke 'next lint'.
       
