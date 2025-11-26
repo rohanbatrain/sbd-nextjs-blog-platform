@@ -59,7 +59,7 @@ export default function ScheduledClient() {
                         <span className="text-sm text-muted-foreground">
                             Scheduled for: {post.scheduled_publish_at ?? 'N/A'}
                         </span>
-                        <Link href={`/posts/${post.post_id}?websiteId=${websiteId}`}>
+                        <Link href={`/posts/${post.post_id}?websiteId=${website.website_id}`}>
                             <Button variant="outline" size="sm">View</Button>
                         </Link>
                     </CardContent>
