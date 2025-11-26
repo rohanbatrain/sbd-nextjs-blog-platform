@@ -46,9 +46,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Lint Plugin (Workaround)
-        run: pnpm add -D @next/eslint-plugin-next@16.0.3
-
       - name: Lint
         run: pnpm run lint
 
