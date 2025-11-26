@@ -68,7 +68,7 @@ export default function EditPostClient() {
                 <h1 className="text-2xl font-bold">Post Not Found</h1>
                 <Link href={`/posts?websiteId=${website.website_id}`}>
                     <Button className="mt-4">Back to Posts</Button>
-                </Link>>
+                </Link>
             </div>
         );
     }
