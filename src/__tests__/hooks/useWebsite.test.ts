@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useWebsite } from '@/context/WebsiteContext';
 import { WebsiteProvider } from '@/context/WebsiteContext';
 import { blogApi } from '@/lib/api';
@@ -102,7 +102,9 @@ describe('useWebsite Hook', () => {
         });
 
         // Change website
-        result.current.setWebsiteId('website-2');
+        act(() => {
+            result.current.setWebsiteId('website-2');
+        });
 
         await waitFor(() => {
             expect(localStorage.getItem('sbd-blog-website-id')).toBe('website-2');
@@ -120,7 +122,9 @@ describe('useWebsite Hook', () => {
         });
 
         // Change website
-        result.current.setWebsiteId('website-2');
+        act(() => {
+            result.current.setWebsiteId('website-2');
+        });
 
         // Should be loading immediately
         expect(result.current.isLoading).toBe(true);
